@@ -1,19 +1,19 @@
 import bcrypt from "bcrypt";
-import NextAuth from "next-auth";
+import NextAuth, { type AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/app/libs/prismadb";
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
     }),
-    GithubProvider({
+    GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_SECRET as string,
     }),
@@ -24,7 +24,7 @@ export const authOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("user :>> ", credentials);
+        console.log("credentials :>> ", credentials);
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Invalid Credentials");
         }
@@ -33,6 +33,7 @@ export const authOptions = {
             email: credentials.email,
           },
         });
+        console.log("user :>> ", user);
         if (!user || !user?.hashedPassword) {
           throw new Error("Invalid credentials");
         }
@@ -57,6 +58,5 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// @ts-ignore
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
