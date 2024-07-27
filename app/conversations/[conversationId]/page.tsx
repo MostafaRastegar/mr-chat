@@ -1,0 +1,36 @@
+import getConversationById from "@/app/actions/getConversationById";
+import getMessages from "@/app/actions/getMessages";
+import { Empty, message } from "antd";
+import Header from "./components/Header";
+import Body from "./components/Body";
+import FormChat from "./components/Form";
+
+interface IParams {
+  conversationId: string;
+}
+const ConversationId = async ({ params }: { params: IParams }) => {
+  const conversation = await getConversationById(params.conversationId);
+  const messages = await getMessages(params.conversationId);
+  console.log("messages4343434 :>> ", messages);
+
+  if (!conversation) {
+    return (
+      <div className="lg:pl-80 h-full">
+        <div className="h-full flex flex-col">
+          <Empty />
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="lg:pl-80 h-full">
+      <div className="h-full flex flex-col">
+        <Header conversation={conversation} />
+        <Body initialMessages={messages} />
+        <FormChat />
+      </div>
+    </div>
+  );
+};
+
+export default ConversationId;

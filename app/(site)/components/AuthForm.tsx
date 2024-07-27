@@ -1,11 +1,14 @@
 "use client";
 import { Button, Form, Input } from "antd";
 import axios from "axios";
-import { useCallback, useState } from "react";
-import { signIn } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 type Variant = "LOGIN" | "REGISTER";
 
 const AuthForm = () => {
+  const session = useSession();
+  const router = useRouter();
   const [variant, setVariant] = useState<Variant>("LOGIN");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -17,11 +20,20 @@ const AuthForm = () => {
     }
   }, [variant]);
 
+  useEffect(() => {
+    console.log("session?.status :>> ", session?.status);
+    if (session?.status === "authenticated") {
+      router.replace("/users");
+    }
+  }, [session?.status]);
+
   const onSubmit = (formData) => {
     console.log("formData :>> ", formData);
     setIsLoading(true);
     if (variant === "REGISTER") {
-      axios.post("/api/register", formData);
+      axios.post("/api/register", formData).then(() => {
+        () => signIn("credentials", formData);
+      });
     } else if (variant === "LOGIN") {
       signIn("credentials", {
         ...formData,
