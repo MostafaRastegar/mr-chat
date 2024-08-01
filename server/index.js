@@ -6,7 +6,7 @@ const httpServer = http.createServer();
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3000", // Replace with your frontend URL
+    origin: "http://172.30.106.165:3000", // Replace with your frontend URL
     methods: ["GET", "POST"],
   },
 });
@@ -16,7 +16,16 @@ io.on("connection", (socket) => {
 
   socket.on("message", (message, room) => {
     console.log("Recieved from API ::", { message, room });
-    // io.emit("message2", data);
+    if (room.length) {
+      io.to(room).emit("message", message);
+    } else {
+      // broadcast
+      io.emit("message", message);
+    }
+  });
+  socket.on("joinRoom", (room) => {
+    console.log("joinRoom :>> ", room);
+    socket.join(room);
   });
 });
 
