@@ -1,8 +1,19 @@
+"use client";
+import { useState } from "react";
 import { ChatBody } from "../_components/ChatBody";
-import { SendBar } from "../_components/SendBar";
 import { SideBar } from "../_components/SideBar";
 
 export default function ChatPage() {
+  const initInbox = ["hi", "hi, how are you?"];
+  const [room, setRoom] = useState("");
+
+  // const handleJoinRoom = () => {
+  //   if (socket) {
+  //     //@ts-ignore
+  //     socket.emit("joinRoom", room);
+  //   }
+  // };
+
   return (
     <>
       {/* component */}
@@ -12,8 +23,7 @@ export default function ChatPage() {
 
           <div className="flex flex-col flex-auto h-full p-6">
             <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
-              <ChatBody />
-              <SendBar />
+              <ChatBody initInbox={initInbox} />
             </div>
           </div>
         </div>

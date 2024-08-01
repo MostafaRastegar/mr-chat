@@ -16,7 +16,7 @@ io.on("connection", (socket) => {
 
   socket.on("message", (message, room) => {
     console.log("Recieved from API ::", { message, room });
-    if (room.length) {
+    if (room?.length) {
       io.to(room).emit("message", message);
     } else {
       // broadcast
