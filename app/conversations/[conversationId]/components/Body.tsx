@@ -1,17 +1,25 @@
 "use client";
+import io from "socket.io-client";
+const socket = io("http://localhost:3001");
 
 import useConversation from "@/app/hooks/useConversation";
 import { FullMessageType } from "@/app/types";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MessageBox from "./MessageBox";
 interface BodyProps {
   initialMessages: FullMessageType[];
 }
 const Body: React.FC<BodyProps> = ({ initialMessages }) => {
   const [messages, setMessages] = useState(initialMessages);
-  console.log("messages :>> ", messages);
   const bottomRef = useRef<HTMLDivElement>(null);
   const { conversationId } = useConversation();
+  useEffect(() => {
+    console.log("Recieved from SERVER ::", socket);
+    socket.on("message2", (data) => {
+      console.log("Recieved from SERVER ::", data);
+      // Execute any command
+    });
+  }, [socket]);
   return (
     <div className="flex-1 overflow-y-auto">
       {messages?.map((message, i) => (

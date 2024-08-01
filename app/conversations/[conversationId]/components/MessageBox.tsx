@@ -11,7 +11,6 @@ interface MessageBoxProps {
 }
 
 const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
-  console.log("data :>> ", data);
   const session = useSession();
   const isOwn = session?.data?.user?.email === data?.sender?.email;
   const seenList = (data.seen || [])

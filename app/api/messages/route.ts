@@ -1,12 +1,17 @@
 import { getCurrentUser } from "@/app/actions/getCurerntUser";
 import prisma from "@/app/libs/prismadb";
 import { NextResponse } from "next/server";
+import io from "socket.io-client";
 
+const socket = io("http://localhost:3001");
 export async function POST(request: Request) {
   try {
     const currentUser = await getCurrentUser();
     const body = await request.json();
     const { message, conversationId } = body;
+
+    console.log("body :>> ", body);
+    socket.emit("message1", body);
 
     if (!currentUser?.id || !currentUser?.email) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -37,6 +42,7 @@ export async function POST(request: Request) {
         sender: true,
       },
     });
+
     const updatedConversation = await prisma.conversation.update({
       where: {
         id: conversationId,
