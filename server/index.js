@@ -4,9 +4,10 @@ const cors = require("cors");
 
 const httpServer = http.createServer();
 
+// origin: "http://172.30.106.165:3000", // Replace with your frontend URL
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://172.30.106.165:3000", // Replace with your frontend URL
+    origin: "http://localhost:3000", // Replace with your frontend URL
     methods: ["GET", "POST"],
   },
 });

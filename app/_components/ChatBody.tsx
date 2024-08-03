@@ -6,6 +6,7 @@ import { SendBar } from "./SendBar";
 
 export const ChatBody = ({ initInbox }: any) => {
   const { socket } = useContext<any>(SocketContext);
+  console.log("initInbox :>> ", initInbox);
   const [inbox, setInbox] = useState<any>(initInbox);
   const [message, setMessage] = useState("");
   const handleMessage = async () => {
@@ -30,7 +31,7 @@ export const ChatBody = ({ initInbox }: any) => {
         <div className="flex flex-col h-full">
           <div className="grid grid-cols-12 gap-y-2">
             {inbox.map((item, index) => (
-              <ChatItem message={item} key={index} />
+              <ChatItem body={item} key={index} />
             ))}
           </div>
         </div>
@@ -44,7 +45,7 @@ export const ChatBody = ({ initInbox }: any) => {
   );
 };
 
-export const ChatItem = ({ message = "", me = true }) => {
+export const ChatItem = ({ body = "", me = true }) => {
   return (
     <>
       <div className="col-start-1 col-end-13 p-3 rounded-lg">
@@ -56,7 +57,7 @@ export const ChatItem = ({ message = "", me = true }) => {
               (me ? "bg-white ml-3" : "bg-indigo-100 mr-3")
             }
           >
-            <div>{message}</div>
+            <div>{body}</div>
           </div>
         </div>
       </div>

@@ -1,8 +1,8 @@
 "use client";
 import { createContext } from "react";
 import { io } from "socket.io-client";
-const socket = io("http://172.30.106.165:3001");
-
+const socket = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`);
+console.log("socket :>> ", socket);
 export const SocketContext = createContext({});
 export const SocketContextProvider = ({
   children,
