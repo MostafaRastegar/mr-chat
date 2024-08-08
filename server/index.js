@@ -18,10 +18,10 @@ io.on("connection", (socket) => {
   socket.on("message", (message, room) => {
     console.log("Recieved from API ::", { message, room });
     if (room?.length) {
-      io.to(room).emit("message", message);
+      io.to(room).emit("receive_message", message);
     } else {
       // broadcast
-      io.emit("message", message);
+      io.emit("receive_message", message);
     }
   });
   socket.on("joinRoom", (room) => {
