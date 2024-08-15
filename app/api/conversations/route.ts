@@ -37,7 +37,8 @@ export async function POST(request: Request) {
       });
       return NextResponse.json(newConversation);
     }
-    const existingConversations = await prisma.conversation.findMany({
+
+    const existingConversations = await prisma.conversationUser.findMany({
       where: {
         OR: [
           {
@@ -53,12 +54,14 @@ export async function POST(request: Request) {
         ],
       },
     });
+
     const singleConversation = existingConversations[0];
+
     if (singleConversation) {
       return NextResponse.json(singleConversation);
     }
 
-    const newConversation = await prisma.conversation.create({
+    const newConversation = await prisma.conversationUser.create({
       data: {
         users: {
           connect: [
@@ -75,6 +78,7 @@ export async function POST(request: Request) {
         users: true,
       },
     });
+
     return NextResponse.json(newConversation);
   } catch (error: any) {
     return new NextResponse("Internal Error", { status: 500 });

@@ -18,19 +18,19 @@ const ChatId = async ({ params }: { params: IParams }) => {
   const messages = await getMessages(params.conversationId);
   // console.log("conversation :>> ", conversation);
   console.log("messages :>> ", messages);
-  if (!conversation) {
-    return (
-      <div className="lg:pl-80 h-full">
-        <div className="h-full flex flex-col">
-          <Empty />
-        </div>
-      </div>
-    );
-  }
+  // if (!conversation) {
+  //   return (
+  //     <div className="lg:pl-80 h-full">
+  //       <div className="h-full flex flex-col">
+  //         <Empty />
+  //       </div>
+  //     </div>
+  //   );
+  // }
   return (
     <div className="lg:pl-80 h-full">
       <div className="h-full flex flex-col">
-        <ChatBody initInbox={messages} currentUser={currentUser} />
+        <ChatBody initInbox={messages || []} currentUser={currentUser} />
       </div>
     </div>
   );

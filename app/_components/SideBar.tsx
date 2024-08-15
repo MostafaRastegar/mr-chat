@@ -4,9 +4,27 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import ConversationBox from "./ConversationBox";
 import useConversation from "../hooks/useConversation";
+import axios from "axios";
+import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export const SideBar = ({ users, conversations }: any) => {
   const { conversationId, isOpen } = useConversation();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = useCallback(() => {
+    setIsLoading(true);
+    axios
+      .post("/api/conversations", {
+        userId: "clzv42aj10000xrf430zoyc9u",
+      })
+      .then((data) => {
+        console.log("conversationId :>> ", data);
+        // router.push(`/conversations/${conversationId}`);
+      })
+      .finally(() => setIsLoading(false));
+  }, [conversationId, router]);
 
   return (
     <div className="sideBar flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
@@ -77,8 +95,10 @@ export const SideBar = ({ users, conversations }: any) => {
         </div>
         <div className="flex flex-col space-y-1 mt-4 -mx-2 h-48 overflow-y-auto">
           {users.map((user) => (
-            <Link
-              href={`/chat/${user.id}`}
+            <div
+              onClick={() => {
+                handleClick();
+              }}
               key={user.id}
               className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
             >
@@ -86,7 +106,7 @@ export const SideBar = ({ users, conversations }: any) => {
                 H
               </div>
               <div className="ml-2 text-sm font-semibold">{user.name}</div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
