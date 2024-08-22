@@ -12,14 +12,15 @@ export const ChatBody = ({ initInbox, currentUser }: any) => {
   const { socket } = useContext<any>(SocketContext);
   const { conversationId } = useConversation();
   // console.log(" conversationId:>> ", conversationId);
-  const [inbox, setInbox] = useState<any>(initInbox);
+  const [inbox, setInbox] = useState(initInbox);
   const [message, setMessage] = useState("");
   const handleMessage = async () => {
     if (socket) {
       //@ts-ignore
       await socket.emit("message", {
         body: message,
-        sender: currentUser,
+        senderId: currentUser.id,
+        conversationId,
       });
     }
     setMessage("");
@@ -27,7 +28,8 @@ export const ChatBody = ({ initInbox, currentUser }: any) => {
 
   const postMessage = async (socketMessage: any) => {
     return await axios.post("/api/messages", {
-      message: socketMessage?.body,
+      body: socketMessage?.body,
+      senderId: currentUser.id,
       conversationId,
     });
   };
@@ -36,15 +38,24 @@ export const ChatBody = ({ initInbox, currentUser }: any) => {
     console.log("socket :>> ", socket);
     if (socket) {
       socket.on("receive_message", (socketMessage: string) => {
+        // const closeInbox = [...inbox];
+        // closeInbox.push(socketMessage);
         console.log("socketMessage :>> ", socketMessage);
-        setInbox([...inbox, socketMessage]);
-        if (currentUser?.email === socketMessage?.sender?.email) {
-          postMessage(socketMessage);
+        if (currentUser?.id === socketMessage?.senderId) {
+          postMessage(socketMessage).then((res) => {
+            setInbox((prev) => {
+              return [...prev, res.data];
+            });
+          });
         }
       });
     }
     return () => socket.off("receive_message");
   }, [socket]);
+
+  useEffect(() => {
+    console.log("inbox :>> ", inbox);
+  }, [inbox]);
 
   return (
     <>

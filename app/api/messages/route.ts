@@ -1,73 +1,32 @@
-import { getCurrentUser } from "@/app/actions/getCurerntUser";
-import prisma from "@/libs/prismadb";
 import { NextResponse } from "next/server";
-import io from "socket.io-client";
-
-const socket = io("http://localhost:3001");
+import prisma from "@/libs/prismadb";
 export async function POST(request: Request) {
   try {
-    const currentUser = await getCurrentUser();
-    const body = await request.json();
-    const { message, conversationId } = body;
-
-    console.log("body :>> ", body);
-    socket.emit("message1", body);
-
-    if (!currentUser?.id || !currentUser?.email) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
-    const newMessage = await prisma.message.create({
-      data: {
-        body: message,
-        image: "",
-        conversation: {
-          connect: {
-            id: conversationId,
-          },
-        },
-        sender: {
-          connect: {
-            id: currentUser.id,
-          },
-        },
-        seen: {
-          connect: {
-            id: currentUser.id,
-          },
-        },
-      },
-      include: {
-        seen: true,
-        sender: true,
-      },
+    const requestBody = await request.json();
+    const { body, conversationId, senderId } = requestBody;
+    const message = await prisma.message.create({
+      data: { body, conversationId, senderId },
     });
-
-    const updatedConversation = await prisma.conversation.update({
-      where: {
-        id: conversationId,
-      },
-      data: {
-        lastMessageAt: new Date(),
-        messages: {
-          connect: {
-            id: newMessage.id,
-          },
-        },
-      },
-      include: {
-        users: true,
-        messages: {
-          include: {
-            seen: true,
-          },
-        },
-      },
-    });
-
-    return NextResponse.json(newMessage);
+    return NextResponse.json(message);
   } catch (error: any) {
-    console.log(error, "ERROR_MESSAGES");
-    return new NextResponse("InternalError", { status: 500 });
+    return new NextResponse("Internal Error", { status: 500 });
   }
 }
+
+// export async function GET(
+//   request: Request,
+//   { params }: { params: { id: string } }
+// ) {
+//   try {
+//     const body = request.json();
+//     console.log("body :>> ", body);
+//     if (!!params?.id) {
+//       const messages = await prisma.message.findMany({
+//         where: { conversationId: params.id },
+//       });
+//       return NextResponse.json(messages);
+//     }
+//   } catch (error: any) {
+//     return new NextResponse("Internal Error", { status: 500 });
+//   }
+// }

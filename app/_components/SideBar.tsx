@@ -12,19 +12,27 @@ export const SideBar = ({ users, conversations }: any) => {
   const { conversationId, isOpen } = useConversation();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  console.log("salam :>> ");
+  const handleClick = async (user) => {
+    console.log("user :>> ", user);
+    // setIsLoading(true);
+    const response = await axios.post("/api/conversations", {
+      name: "Conversation between User A and User B",
+      isGroup: false,
+    });
 
-  const handleClick = useCallback(() => {
-    setIsLoading(true);
-    axios
-      .post("/api/conversations", {
-        userId: "clzv42aj10000xrf430zoyc9u",
-      })
-      .then((data) => {
-        console.log("conversationId :>> ", data);
-        // router.push(`/conversations/${conversationId}`);
-      })
-      .finally(() => setIsLoading(false));
-  }, [conversationId, router]);
+    const conversationId = await response.data.id;
+
+    if (conversationId) {
+      axios
+        .post(`/api/conversations/${conversationId}/users`, {
+          userId: user.id,
+        })
+        .then(() => {
+          router.push(`/chat/${conversationId}`);
+        });
+    }
+  };
 
   return (
     <div className="sideBar flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
@@ -97,7 +105,7 @@ export const SideBar = ({ users, conversations }: any) => {
           {users.map((user) => (
             <div
               onClick={() => {
-                handleClick();
+                handleClick(user);
               }}
               key={user.id}
               className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"

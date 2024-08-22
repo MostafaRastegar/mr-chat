@@ -55,10 +55,9 @@ export const SendBar = ({
         </div>
       </div>
       <div className="ml-4">
-        <button
+        <div
           className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
-          onClick={handleMessage}
-          type="button"
+          onClick={() => handleMessage(message)}
         >
           <span>Send</span>
           <span className="ml-2">
@@ -77,7 +76,7 @@ export const SendBar = ({
               />
             </svg>
           </span>
-        </button>
+        </div>
       </div>
     </div>
   );

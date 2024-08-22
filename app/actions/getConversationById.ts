@@ -1,4 +1,3 @@
-import prisma from "@/libs/prismadb";
 import { getCurrentUser } from "./getCurerntUser";
 
 const getConversationById = async (conversationId: string) => {
@@ -8,15 +7,10 @@ const getConversationById = async (conversationId: string) => {
       return null;
     }
 
-    const conversation = await prisma.conversation.findUnique({
-      where: {
-        id: conversationId,
-      },
-      include: {
-        users: true,
-      },
-    });
-
+    const conversation = (
+      await fetch(`/api/conversations/${conversationId}`)
+    ).json();
+    console.log("conversation :>> ", conversation);
     return conversation;
   } catch (error: any) {
     return null;
